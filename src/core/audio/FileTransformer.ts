@@ -1,17 +1,17 @@
 import {Album} from '@/data/models/audio/Album';
 import * as musicMetadata from 'music-metadata-browser';
 import {AudioFile} from '@/data/models/audio/AudioFile';
+import {albumMap} from '@/types/AlbumMap';
+import {PlaylistManager} from '@/core/playlist/PlaylistManager';
 
 export class FileTransformer {
-  public async parseAlbums(): Promise<{ [name: string]: Album }> {
-     let albums: { [name: string]: Album } = {};
+  public async parseAlbums(): Promise<albumMap> {
+     let albums: albumMap = {};
 
      for (let fileName of FileTransformer.audioFilePathNames){
-       const audioFilePath = `@/static/audio/${fileName}`;
        // console.log(`[DEBUG]: FileTransformer - Parsing: ${audioFilePath}`);
 
        const audioFile = require(`@/static/audio/${fileName}`);
-       const audioInstance = new Audio(audioFile);
        const audioMetadata = await musicMetadata.fetchFromUrl(audioFile);
 
        let audioFileInstance = new AudioFile(
@@ -37,6 +37,9 @@ export class FileTransformer {
 
        albums[audioMetadata.common.album].audioFiles.push(audioFileInstance)
      }
+
+     // new PlaylistManager().createPlaylist("Favourites");
+    new PlaylistManager().addToPlaylist("Favourites", "Dalek")
 
      return albums;
   }

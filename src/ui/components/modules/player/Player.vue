@@ -74,17 +74,16 @@ export default class Player extends Vue {
 
       let audioFile = AlbumSingleton.getInstance().getStore()["Black Holes and Revelations"].audioFiles;
 
-      console.log("Adding song!")
       this.addSong(audioFile[0])
       this.addSong(audioFile[1])
       this.addSong(audioFile[2])
       this.addSong(audioFile[3])
       this.addSong(audioFile[4])
 
-      setTimeout( () => {
-        console.log("Next!")
-        this.nextSong()
-      }, 3000)
+      // setTimeout( () => {
+      //   console.log("Next!")
+      //   this.nextSong()
+      // }, 3000)
     });
 
     this.audioInstance.ontimeupdate = () => {
