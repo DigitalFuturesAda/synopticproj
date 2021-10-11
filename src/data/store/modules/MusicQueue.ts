@@ -1,13 +1,10 @@
 import {Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import {AudioFile} from '@/data/models/audio/AudioFile';
-import {namespace} from 'vuex-class';
 import {Album} from '@/data/models/audio/Album';
-
-// const playerState = namespace('PlayerState');
 
 @Module({ namespaced: true })
 export class MusicQueue extends VuexModule {
-  audioFilesQueue: Array<AudioFile> = new Array<AudioFile>();
+  private audioFilesQueue: Array<AudioFile> = new Array<AudioFile>();
 
   @Mutation
   public addSong(song: AudioFile){
