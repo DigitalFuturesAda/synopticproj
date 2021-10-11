@@ -1,22 +1,28 @@
 import {AudioFile} from '@/data/models/audio/AudioFile';
 
 export class Album {
-  private readonly _albumName: string;
-  private readonly _bandName: string;
+  private readonly _title: string;
+  private readonly _author: string;
+  private readonly _custom: boolean = false;
   private readonly _audioFiles: Array<AudioFile>;
 
-  constructor(albumName: string, bandName: string, audioFiles: Array<AudioFile>) {
-    this._albumName = albumName;
-    this._bandName = bandName;
+  constructor(title: string, author: string, custom: boolean, audioFiles: Array<AudioFile>) {
+    this._title = title;
+    this._author = author;
     this._audioFiles = audioFiles;
+    this._custom = custom;
   }
 
-  get albumName(): string {
-    return this._albumName;
+  get title(): string {
+    return this._title;
   }
 
-  get bandName(): string {
-    return this._bandName;
+  get author(): string {
+    return this._author;
+  }
+
+  get custom(): boolean {
+    return this._custom;
   }
 
   get audioFiles(): Array<AudioFile> {

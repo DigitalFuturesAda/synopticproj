@@ -30,11 +30,11 @@ export class FileTransformer {
          albums[audioMetadata.common.album] = new Album(
              audioMetadata.common.album,
              audioMetadata.common.artist,
+             /* custom = */ false,
              new Array<AudioFile>()
          )
        }
 
-       // audioFileInstance.album = albums[audioMetadata.common.album]
        albums[audioMetadata.common.album].audioFiles.push(audioFileInstance)
      }
 

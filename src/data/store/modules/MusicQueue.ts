@@ -4,6 +4,7 @@ import {Album} from '@/data/models/audio/Album';
 
 @Module({ namespaced: true })
 export class MusicQueue extends VuexModule {
+  private currentFileCounter: number = 0;
   private audioFilesQueue: Array<AudioFile> = new Array<AudioFile>();
 
   @Mutation
@@ -20,7 +21,14 @@ export class MusicQueue extends VuexModule {
 
   @Mutation
   public nextSong(){
-    this.audioFilesQueue.shift();
+    if (this.currentFileCounter >= this.audioFilesQueue.length) return
+    this.currentFileCounter ++;
+  }
+
+  @Mutation
+  public previousSong(){
+    if (this.currentFileCounter <= 0) return
+    this.currentFileCounter --;
   }
 
   @Mutation
@@ -29,6 +37,14 @@ export class MusicQueue extends VuexModule {
   }
 
   public get currentSong(): AudioFile {
-    return this.audioFilesQueue[0];
+    return this.audioFilesQueue[this.currentFileCounter];
+  }
+
+  public get currentTrackNumber(): number {
+    return this.currentFileCounter;
+  }
+
+  public get playlistLength(): number {
+    return this.audioFilesQueue.length
   }
 }

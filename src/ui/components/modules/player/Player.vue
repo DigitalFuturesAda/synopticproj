@@ -4,12 +4,13 @@
       <h1>{{ currentSong.audioName }}</h1>
     </template>
 
-    <audio ref="audioInstance" controls :src = "computedCurrentSong"></audio>
+    <audio ref="audioInstance" autoplay controls :src = "computedCurrentSong"></audio>
 
     <p>Current duration {{ Math.round(audioProgressPercent) }}%</p>
 
-    <button>{{ isPaused ? "Play" : "Pause" }}</button>
-    <button>Next song</button>
+    <button v-on:click="playPauseButtonPress()">{{ isPaused ? "Play" : "Pause" }}</button>
+    <button v-on:click="nextSong()" :disabled="isAudioQueueLastItem">Next song</button>
+    <button v-on:click="previousSong" :disabled="isAudioQueueFirstItem">Previous song</button>
   </div>
 </template>
 
@@ -28,14 +29,19 @@ const musicQueue = namespace('MusicQueue');
 export default class Player extends Vue {
   @Prop() private msg!: string;
 
-  @musicQueue.Getter currentSong!: AudioFile;
   @musicQueue.Mutation addSong!: (state: AudioFile) => void;
   @musicQueue.Mutation nextSong!: () => void;
+  @musicQueue.Mutation previousSong!: () => void;
+  @musicQueue.Getter currentTrackNumber!: number;
+  @musicQueue.Getter playlistLength!: number;
+  @musicQueue.Getter currentSong!: AudioFile;
 
   @playerState.Mutation setAudioProgress!: (state: number) => void;
   @playerState.Mutation setPausedState!: (state: boolean) => void;
   @playerState.Getter audioProgressPercent!: number;
   @playerState.Getter isPaused!: boolean;
+
+  audioInstance!: HTMLAudioElement;
 
   get computedCurrentSong(){
     if (this.currentSong){
@@ -44,7 +50,25 @@ export default class Player extends Vue {
     return "";
   }
 
+  get isAudioQueueLastItem(){
+    return this.currentTrackNumber === this.playlistLength - 1;
+  }
+
+  get isAudioQueueFirstItem(){
+    return this.currentTrackNumber === 0;
+  }
+
+  public playPauseButtonPress() {
+    if (this.isPaused){
+      this.audioInstance.play();
+    } else {
+      this.audioInstance.pause();
+    }
+  }
+
   public async mounted(): Promise<void> {
+    this.audioInstance = <HTMLAudioElement>this.$refs.audioInstance;
+
     new FileTransformer().parseAlbums().then(parsedResponse => {
       AlbumSingleton.getInstance().setStore(parsedResponse);
 
@@ -57,23 +81,21 @@ export default class Player extends Vue {
       this.addSong(audioFile[3])
       this.addSong(audioFile[4])
 
-      // setTimeout( () => {
-      //   console.log("Clearing!")
-      //   this.nextSong()
-      // }, 3000)
-
+      setTimeout( () => {
+        console.log("Next!")
+        this.nextSong()
+      }, 3000)
     });
 
-    let audioInstance: HTMLAudioElement = <HTMLAudioElement>this.$refs.audioInstance;
-    audioInstance.ontimeupdate = () => {
-      this.setAudioProgress((audioInstance.currentTime / audioInstance.duration) * 100)
+    this.audioInstance.ontimeupdate = () => {
+      this.setAudioProgress((this.audioInstance.currentTime / this.audioInstance.duration) * 100)
     }
 
-    audioInstance.onpause = () => {
+    this.audioInstance.onpause = () => {
       this.setPausedState(true);
     }
 
-    audioInstance.onplay = () => {
+    this.audioInstance.onplay = () => {
       this.setPausedState(false);
     }
   }
