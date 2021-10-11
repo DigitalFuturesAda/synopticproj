@@ -5,11 +5,11 @@ import {namespace} from 'vuex-class';
 @Module({ namespaced: true })
 export default class PlayerState extends VuexModule {
   private _audioProgressPercent: number = 0;
-  private isPaused: boolean = true;
+  private _isPaused: boolean = true;
 
   @Mutation
-  public togglePausedState(){
-    this.isPaused = !this.isPaused;
+  public setPausedState(isPaused: boolean){
+    this._isPaused = isPaused;
   }
 
   @Mutation
@@ -23,5 +23,9 @@ export default class PlayerState extends VuexModule {
 
   public get audioProgressPercent(): number {
     return isNaN(this._audioProgressPercent) ? 0 : this._audioProgressPercent;
+  }
+
+  public get isPaused(): boolean {
+    return this._isPaused;
   }
 }

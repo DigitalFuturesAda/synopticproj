@@ -4,9 +4,12 @@
       <h1>{{ currentSong.audioName }}</h1>
     </template>
 
-    <audio ref="audioInstance" autoplay controls :src = "computedCurrentSong"></audio>
+    <audio ref="audioInstance" controls :src = "computedCurrentSong"></audio>
 
     <p>Current duration {{ Math.round(audioProgressPercent) }}%</p>
+
+    <button>{{ isPaused ? "Play" : "Pause" }}</button>
+    <button>Next song</button>
   </div>
 </template>
 
@@ -19,30 +22,25 @@ import { AudioFile } from '@/data/models/audio/AudioFile';
 import PlayerState from '@/data/store/modules/PlayerState';
 
 const playerState = namespace('PlayerState');
-const musicQueue  = namespace('MusicQueue');
+const musicQueue = namespace('MusicQueue');
 
 @Component
 export default class Player extends Vue {
   @Prop() private msg!: string;
-
-  private trackProgress: number = 0;
 
   @musicQueue.Getter currentSong!: AudioFile;
   @musicQueue.Mutation addSong!: (state: AudioFile) => void;
   @musicQueue.Mutation nextSong!: () => void;
 
   @playerState.Mutation setAudioProgress!: (state: number) => void;
+  @playerState.Mutation setPausedState!: (state: boolean) => void;
   @playerState.Getter audioProgressPercent!: number;
-
-  get currentDuration(){
-    return this.audioProgressPercent;
-  }
+  @playerState.Getter isPaused!: boolean;
 
   get computedCurrentSong(){
     if (this.currentSong){
       return this.currentSong.audioFileLocation;
     }
-
     return "";
   }
 
@@ -69,6 +67,14 @@ export default class Player extends Vue {
     let audioInstance: HTMLAudioElement = <HTMLAudioElement>this.$refs.audioInstance;
     audioInstance.ontimeupdate = () => {
       this.setAudioProgress((audioInstance.currentTime / audioInstance.duration) * 100)
+    }
+
+    audioInstance.onpause = () => {
+      this.setPausedState(true);
+    }
+
+    audioInstance.onplay = () => {
+      this.setPausedState(false);
     }
   }
 }
