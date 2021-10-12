@@ -1,16 +1,16 @@
 <template>
-  <div class="home">
-    <Player msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div class="homePage">
+    <AudioController/>
   </div>
 </template>
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator';
-  import Player from '@/ui/components/modules/player/Player.vue';
+  import AudioController from '@/ui/components/modules/player/AudioController.vue';
 
   @Component({
     components: {
-      Player,
+      AudioController,
     },
   })
 export default class Home extends Vue {}

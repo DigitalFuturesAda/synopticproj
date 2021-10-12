@@ -32,4 +32,28 @@ export default class Util {
     }
     return array;
   }
+
+  /**
+   * Formats seconds into HH:MM:SS always in the shortest form.
+   * E.g:
+   *  - 10s    = 0:10
+   *  - 100s   = 1.40
+   *  - 1000s  = 16.40
+   *
+   * @param seconds
+   */
+  public static formatSeconds(seconds: number): string {
+    let date = new Date(0);
+    date.setSeconds(seconds);
+
+    let timeString = date.toISOString().substr(11, 8);
+
+    if (timeString.substr(0, 4) === "00:0") {
+      return timeString.substr(4, timeString.length)
+    } else if (timeString.substr(0, 2) === "00"){
+      return timeString.substr(3, timeString.length)
+    } else {
+      return timeString
+    }
+  }
 }
