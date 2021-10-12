@@ -8,7 +8,9 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@chakra-ui/vue": "^0.6.6",
     "core-js": "^3.6.5",
+    "emotion": "^10.0.27",
     "music-metadata-browser": "^2.5.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
@@ -27,11 +29,13 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/test-utils": "^1.0.3",
     "chai": "^4.1.2",
+    "chakra-loader": "^1.0.2",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "typescript": "~4.1.5",
-    "vuex-class": "^0.3.2",
+    "vue-cli-plugin-chakra-ui": "~1.0.3",
     "vue-template-compiler": "^2.6.11",
+    "vuex-class": "^0.3.2",
     "vuex-module-decorators": "^0.16.1"
   }
 }
