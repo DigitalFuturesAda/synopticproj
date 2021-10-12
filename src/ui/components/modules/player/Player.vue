@@ -4,7 +4,7 @@
       <h1>{{ currentSong.audioName }}</h1>
     </template>
 
-    <audio ref="audioInstance" autoplay controls :src = "computedCurrentSong"></audio>
+    ;<audio ref="audioInstance" autoplay :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
 
     <p>Current duration {{ Math.round(audioProgressPercent) }}%</p>
 
@@ -27,6 +27,8 @@ const musicQueue = namespace('MusicQueue');
 
 @Component
 export default class Player extends Vue {
+  private readonly debugOption_displayAudioElement = false;
+
   @Prop() private msg!: string;
 
   @musicQueue.Mutation addSong!: (state: AudioFile) => void;
