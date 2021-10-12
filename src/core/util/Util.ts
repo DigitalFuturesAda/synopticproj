@@ -15,4 +15,21 @@ export default class Util {
     }
     return hash;
   };
+
+  /**
+   * Shuffles an array - unbiased shuffle algorithm is the Fisher-Yates Shuffle.
+   *
+   * @param array
+   * @author: Fisher Yates - https://stackoverflow.com/a/2450976
+   */
+  public static shuffleArray(array: Array<any>){
+    let currentIndex = array.length,  randomIndex;
+    while (currentIndex != 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
 }

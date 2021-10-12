@@ -1,6 +1,7 @@
 import {Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import {AudioFile} from '@/data/models/audio/AudioFile';
 import {Album} from '@/data/models/audio/Album';
+import Util from '@/core/util/Util';
 
 @Module({ namespaced: true })
 export class MusicQueue extends VuexModule {
@@ -33,7 +34,7 @@ export class MusicQueue extends VuexModule {
 
   @Mutation
   public shufflePlaylist(){
-    throw "Not yet implemented!";
+    this.audioFilesQueue = Util.shuffleArray(this.audioFilesQueue);
   }
 
   public get currentSong(): AudioFile {
