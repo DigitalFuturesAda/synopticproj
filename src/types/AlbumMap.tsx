@@ -4,6 +4,6 @@ export type albumMap = { [name: string]: Album }
 
 export interface playlistItem {
   name: string,
-  files: string[]
+  files: number[]
 }
 export type playlistStore = playlistItem[]

@@ -20,7 +20,7 @@ export class AudioFile {
    * Naive hashcode implementation. Generates a unique constant value deriving
    * from the values of the {@link AudioFile} instance.
    */
-  get hash(): number {
+  public get hash(): number {
     const prime: number = 3;
     let hash: number = 1;
     hash = prime * hash + Util.hashCode(this._audioName);

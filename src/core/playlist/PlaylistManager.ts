@@ -1,4 +1,5 @@
 import {playlistItem, playlistStore} from '@/types/AlbumMap';
+import {AudioTransformer} from '@/core/audio/AudioTransformer';
 
 export class PlaylistManager {
   private static instance: PlaylistManager;
@@ -36,11 +37,15 @@ export class PlaylistManager {
     localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore));
   }
 
-  public addToPlaylist(name: string, audioId: string){
+  public addToPlaylist(name: string, audioId: number){
     let currentStore = PlaylistManager.getOrCreateStore();
 
-    if (currentStore.find(playlist => playlist.name !== name)){
+    if (!currentStore.find(playlist => playlist.name === name)){
       throw "Playlist does not exist!"
+    }
+
+    if (!PlaylistManager.doesAlbumMapContainAudioId(audioId)){
+      throw "audioId is not a recognised hash"
     }
 
     for (let item of currentStore){
@@ -62,5 +67,21 @@ export class PlaylistManager {
     }
 
     return JSON.parse(<string>localStorage.getItem(PlaylistManager.PLAYLIST_KEY));
+  }
+
+  private static doesAlbumMapContainAudioId(audioId: number): boolean {
+    const albumMap = AudioTransformer.albumMap;
+    if (albumMap === null){
+      throw "Cannot add item to playlist. The albumMap is null!"
+    }
+
+    for (const album of Object.values(albumMap)) {
+      for (let audioFile of album.audioFiles){
+        if (audioFile.hash === audioId){
+          return true
+        }
+      }
+    }
+    return false;
   }
 }

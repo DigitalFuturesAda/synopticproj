@@ -79,11 +79,6 @@ export default class Player extends Vue {
       this.addSong(audioFile[2])
       this.addSong(audioFile[3])
       this.addSong(audioFile[4])
-
-      // setTimeout( () => {
-      //   console.log("Next!")
-      //   this.nextSong()
-      // }, 3000)
     });
 
     this.audioInstance.ontimeupdate = () => {
