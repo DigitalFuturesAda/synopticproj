@@ -4,12 +4,20 @@ import {AudioFile} from '@/data/models/audio/AudioFile';
 import {albumMap} from '@/types/AlbumMap';
 import {PlaylistManager} from '@/core/playlist/PlaylistManager';
 
-export class FileTransformer {
-  public async parseAlbums(): Promise<albumMap> {
+export class AudioTransformer {
+  public async createAlbumMemoryCache(): Promise<albumMap> {
+    let albumMap = await AudioTransformer.parseFileMetadata();
+    let playlistStore = PlaylistManager.getOrCreate().fetchUnprocessedPlaylistStore();
+
+
+    return albumMap;
+  }
+
+  private static async parseFileMetadata(): Promise<albumMap> {
      let albums: albumMap = {};
 
-     for (let fileName of FileTransformer.audioFilePathNames){
-       // console.log(`[DEBUG]: FileTransformer - Parsing: ${audioFilePath}`);
+     for (let fileName of AudioTransformer.audioFilePathNames){
+       // console.log(`[DEBUG]: AudioTransformer - Parsing: ${audioFilePath}`);
 
        const audioFile = require(`@/static/audio/${fileName}`);
        const audioMetadata = await musicMetadata.fetchFromUrl(audioFile);
@@ -20,6 +28,8 @@ export class FileTransformer {
            audioMetadata.common.picture ? audioMetadata.common.picture[0].data : null,
            audioFile
        );
+
+       console.log(audioFileInstance.hash)
 
        if (!audioMetadata.common.album || !audioMetadata.common.artist){
          console.warn(`[WARN]: FileTransformer - Audio file: ${audioFileInstance.audioName} has no associated album or artist name`);
@@ -37,9 +47,6 @@ export class FileTransformer {
 
        albums[audioMetadata.common.album].audioFiles.push(audioFileInstance)
      }
-
-     // new PlaylistManager().createPlaylist("Favourites");
-    new PlaylistManager().addToPlaylist("Favourites", "Dalek")
 
      return albums;
   }

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { shallowMount } from '@vue/test-utils'
 import HelloWorld from '@/ui/components/modules/player/Player.vue'
-import {FileTransformer} from '@/core/audio/FileTransformer';
+import {AudioTransformer} from '@/core/audio/AudioTransformer';
 import {AlbumSingleton} from '@/core/audio/AlbumSingleton';
 
 describe('Player.vue', () => {
@@ -16,7 +16,7 @@ describe('Player.vue', () => {
 
 describe("passes", () => {
   it("i dont know", () => {
-    new FileTransformer().parseAlbums().then(parsedResponse => {
+    new AudioTransformer().parseAlbums().then(parsedResponse => {
       expect(parsedResponse[""])
     });
   })

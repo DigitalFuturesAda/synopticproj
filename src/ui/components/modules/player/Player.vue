@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { FileTransformer } from "@/core/audio/FileTransformer";
+import { AudioTransformer } from "../../../../core/audio/AudioTransformer";
 import { AlbumSingleton } from "@/core/audio/AlbumSingleton";
 import { namespace } from 'vuex-class';
 import { AudioFile } from '@/data/models/audio/AudioFile';
@@ -69,7 +69,7 @@ export default class Player extends Vue {
   public async mounted(): Promise<void> {
     this.audioInstance = <HTMLAudioElement>this.$refs.audioInstance;
 
-    new FileTransformer().parseAlbums().then(parsedResponse => {
+    new AudioTransformer().createAlbumMemoryCache().then(parsedResponse => {
       AlbumSingleton.getInstance().setStore(parsedResponse);
 
       let audioFile = AlbumSingleton.getInstance().getStore()["Black Holes and Revelations"].audioFiles;

@@ -1,4 +1,5 @@
 import {Album} from '@/data/models/audio/Album';
+import Util from '@/core/util/Util';
 
 export class AudioFile {
   private readonly _audioName: string;
@@ -13,6 +14,21 @@ export class AudioFile {
     this._durationSeconds = durationSeconds;
     this._albumArt = albumArt;
     this._audioFileLocation = audioFileLocation;
+  }
+
+  /**
+   * Naive hashcode implementation. Generates a unique constant value deriving
+   * from the values of the {@link AudioFile} instance.
+   */
+  get hash(): number {
+    const prime: number = 3;
+    let hash: number = 1;
+    hash = prime * hash + Util.hashCode(this._audioName);
+    hash = prime * hash + (this._durationSeconds ^ (this._durationSeconds >>> prime));
+    hash = prime * hash + (((this.albumArt == null)
+        ? 0
+        : this.albumArt.byteLength ^ (this.albumArt.byteLength >>> prime) >>> this.albumArt?.byteOffset))
+    return hash * -1;
   }
 
   get album(): Album {

@@ -1,14 +1,21 @@
-import {Album} from '@/data/models/audio/Album';
-import {albumMap, playlistItem, playlistStore} from '@/types/AlbumMap';
+import {playlistItem, playlistStore} from '@/types/AlbumMap';
 
-// this relies on the albulm map being defined.
 export class PlaylistManager {
+  private static instance: PlaylistManager;
   private static PLAYLIST_KEY = "PLAYLIST_STORE";
 
-  public fetchPlaylists(): albumMap | null {
-    let currentStore = PlaylistManager.getOrCreateStore();
+  private constructor() { }
 
-    return null;
+  public static getOrCreate(): PlaylistManager {
+    if (!PlaylistManager.instance) {
+      PlaylistManager.instance = new PlaylistManager();
+    }
+
+    return PlaylistManager.instance;
+  }
+
+  public fetchUnprocessedPlaylistStore(): playlistStore {
+    return PlaylistManager.getOrCreateStore();
   }
 
   public createPlaylist(name: string){
