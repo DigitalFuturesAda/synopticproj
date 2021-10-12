@@ -1,19 +1,6 @@
 <template>
   <div>
-    <div class="player" >
-      <template v-if="currentSong">
-        <h1>{{ currentSong.audioName }}</h1>
-      </template>
-
-      <audio ref="audioInstance" autoplay :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
-
-      <p>Current duration {{ audioProgressPercent }}%</p>
-
-      <button v-on:click="playPauseButtonPress()">{{ isPaused ? "Play" : "Pause" }}</button>
-      <button v-on:click="nextSong()" :disabled="isAudioQueueLastItem">Next song</button>
-      <button v-on:click="previousSong" :disabled="isAudioQueueFirstItem">Previous song</button>
-    </div>
-
+    <audio ref="audioInstance" autoplay :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
     <div class = "audioController">
       <div class = "audioWrapper">
         <div class = "audioInformation">
@@ -39,6 +26,7 @@
                 step="any"
                 max="100">
           </div>
+
           <div class = "labels">
             <div class = "currentTime">
               <h1>{{ currentAudioDuration }}</h1>
@@ -46,6 +34,43 @@
             <div class = "audioDuration">
               <h1>{{ maximumAudioDuration }}</h1>
             </div>
+          </div>
+        </div>
+
+        <div class = "audioControls">
+          <div class = "wrapper">
+            <ImageButton style = "transform: scale(0.6)">
+              <ShuffleSvg fill = "white" style = "opacity: 0.3"/>
+            </ImageButton>
+
+            <ImageButton
+                v-on:click.native="previousSong()"
+                :disabled="isAudioQueueFirstItem"
+                style = "transform: scale(1.1)">
+              <RewindSvg fill = "white" style = "opacity: 0.75"/>
+            </ImageButton>
+
+            <ImageButton
+                v-on:click.native="playPauseButtonPress()"
+                style = "transform: scale(1.5); padding-left: 15px; padding-right: 15px">
+              <template v-if="isPaused">
+                <PlaySvg fill = "white" style = "opacity: 0.95"/>
+              </template>
+              <template v-else>
+                <PauseSvg fill = "white" style = "opacity: 0.95"/>
+              </template>
+            </ImageButton>
+
+            <ImageButton
+                v-on:click.native="nextSong()"
+                :disabled="isAudioQueueLastItem"
+                style = "transform: scale(1.1)">
+              <FastForwardSvg fill = "white" style = "opacity: 0.75"/>
+            </ImageButton>
+
+            <ImageButton style = "transform: scale(0.6)">
+              <CollectionSvg fill = "white" style = "opacity: 0.3"/>
+            </ImageButton>
           </div>
         </div>
       </div>
@@ -61,11 +86,23 @@ import { namespace } from 'vuex-class';
 import { AudioFile } from '@/data/models/audio/AudioFile';
 import PlayerState from '@/data/store/modules/PlayerState';
 import Util from "@/core/util/Util"
+import ImageButton from "@/ui/components/base/button/ImageButton.vue";
+
+import ShuffleSvg from "@/ui/assets/shuffle.svg";
+import RewindSvg from "@/ui/assets/rewind.svg";
+import PauseSvg from "@/ui/assets/pause.svg";
+import PlaySvg from "@/ui/assets/play.svg";
+import FastForwardSvg from "@/ui/assets/fast-forward.svg";
+import CollectionSvg from "@/ui/assets/collection.svg";
 
 const playerState = namespace('PlayerState');
 const musicQueue = namespace('MusicQueue');
-
-@Component
+@Component({
+  components: {
+    ImageButton, ShuffleSvg, RewindSvg, PauseSvg, FastForwardSvg, CollectionSvg,
+    PlaySvg
+  }
+})
 export default class AudioController extends Vue {
   private readonly debugOption_displayAudioElement = false;
 
@@ -167,7 +204,7 @@ export default class AudioController extends Vue {
         display: grid
         grid-template-columns: $bandInformationHeight 1fr
         grid-gap: 20px
-        margin-bottom: 30px
+        margin-bottom: 25px
 
         .artistInformation
           display: flex
@@ -201,8 +238,23 @@ export default class AudioController extends Vue {
             filter: brightness(1.25)
             object-fit: contain
 
+      .audioControls
+        display: flex
+        justify-content: center
+        align-items center
+        padding-bottom: 20px
+
+        .wrapper
+          display: flex
+          align-items: stretch;
+          justify-content: space-around
+
+          .playPauseButton
+            width: 35px;
+            height: 35px
+
       .audioSeeker
-        padding-bottom: 30px
+        padding-bottom: 10px
 
         .labels
           display: flex

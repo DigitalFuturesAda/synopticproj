@@ -23,7 +23,7 @@ export class AlbumSingleton {
     this.albumMap = albumMap;
   }
 
-  public getStore(): { [name: string]: Album } {
+  public getStore(): albumMap {
     return this.albumMap;
   }
 }
