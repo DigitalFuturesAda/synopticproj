@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '@/ui/views/home/Home.vue'
+import AlbumView from '@/ui/views/home/AlbumView.vue'
 
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'AlbumView',
+    component: AlbumView
   }
 ]
 

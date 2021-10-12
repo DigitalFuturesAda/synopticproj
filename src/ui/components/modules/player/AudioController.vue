@@ -1,21 +1,20 @@
 <template>
   <div>
-    <audio ref="audioInstance" autoplay :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
+    <audio ref="audioInstance" :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
     <div class = "audioController">
       <div class = "audioWrapper">
-        <div class = "audioInformation">
+
+        <div class = "audioInformation" v-if = "currentSong">
           <div class = "audioCover">
-            <img src="https://i.scdn.co/image/ab6761610000e5ebca77d763703a93930c363a39" alt="Album cover">
+            <img :src="albumArt" alt="Album cover">
           </div>
           <div class = "artistInformation">
-            <template v-if="currentSong">
-              <h1>{{ currentSong.audioName }}</h1>
-            </template>
-            <h2>Daft Punk</h2>
+            <h1>{{ currentSong.audioName }}</h1>
+            <h2>{{ currentSong.album.author }}</h2>
           </div>
         </div>
 
-        <div class = "audioSeeker">
+        <div class = "audioSeeker" v-show = "currentSong">
           <div class = "musicProgress">
             <input
                 ref="audioProgress"
@@ -27,7 +26,7 @@
                 max="100">
           </div>
 
-          <div class = "labels">
+          <div class = "labels" v-if = "currentSong">
             <div class = "currentTime">
               <h1>{{ currentAudioDuration }}</h1>
             </div>
@@ -39,19 +38,20 @@
 
         <div class = "audioControls">
           <div class = "wrapper">
-            <ImageButton style = "transform: scale(0.6)">
+            <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong">
               <ShuffleSvg fill = "white" style = "opacity: 0.3"/>
             </ImageButton>
 
             <ImageButton
                 v-on:click.native="previousSong()"
-                :disabled="isAudioQueueFirstItem"
+                :disabled="!currentSong || isAudioQueueFirstItem"
                 style = "transform: scale(1.1)">
               <RewindSvg fill = "white" style = "opacity: 0.75"/>
             </ImageButton>
 
             <ImageButton
                 v-on:click.native="playPauseButtonPress()"
+                :disabled="!currentSong"
                 style = "transform: scale(1.5); padding-left: 15px; padding-right: 15px">
               <template v-if="isPaused">
                 <PlaySvg fill = "white" style = "opacity: 0.95"/>
@@ -63,12 +63,12 @@
 
             <ImageButton
                 v-on:click.native="nextSong()"
-                :disabled="isAudioQueueLastItem"
+                :disabled="!currentSong || isAudioQueueLastItem"
                 style = "transform: scale(1.1)">
               <FastForwardSvg fill = "white" style = "opacity: 0.75"/>
             </ImageButton>
 
-            <ImageButton style = "transform: scale(0.6)">
+            <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong">
               <CollectionSvg fill = "white" style = "opacity: 0.3"/>
             </ImageButton>
           </div>
@@ -139,6 +139,11 @@ export default class AudioController extends Vue {
     return this.currentTrackNumber === 0;
   }
 
+  get albumArt(){
+    if (!this.currentSong.albumArt) return
+    return Util.getImageFromBuffer(this.currentSong.albumArt)
+  }
+
   public playPauseButtonPress() {
     if (this.isPaused){
       this.audioInstance.play();
@@ -153,8 +158,13 @@ export default class AudioController extends Vue {
 
       let audioFile = AlbumSingleton.getInstance().getStore()["Black Holes and Revelations"].audioFiles;
 
-      this.addSong(audioFile[3])
-      this.addSong(audioFile[4])
+      console.log(AlbumSingleton.getInstance().getStore())
+
+      setTimeout( () => {
+        this.addSong(audioFile[3])
+        this.addSong(audioFile[4])
+      }, 2000)
+
     });
 
     this.audioInstance.ontimeupdate = () => {
@@ -236,13 +246,13 @@ export default class AudioController extends Vue {
             border-radius 50%
             height: 100%
             filter: brightness(1.25)
-            object-fit: contain
+            object-fit: cover
 
       .audioControls
         display: flex
         justify-content: center
         align-items center
-        padding-bottom: 20px
+        padding-bottom: 30px
 
         .wrapper
           display: flex

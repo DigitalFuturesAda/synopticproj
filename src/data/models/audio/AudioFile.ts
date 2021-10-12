@@ -1,5 +1,6 @@
 import {Album} from '@/data/models/audio/Album';
 import Util from '@/core/util/Util';
+import {WeakAlbum} from '@/data/models/audio/WeakAlbum';
 
 export class AudioFile {
   private readonly _audioName: string;
@@ -7,7 +8,7 @@ export class AudioFile {
   private readonly _albumArt: Buffer | null;
   private readonly _audioFileLocation: string;
 
-  private _album!: Album;
+  private _album!: WeakAlbum;
 
   constructor(audioName: string, durationSeconds: number, albumArt: Buffer | null, audioFileLocation: string) {
     this._audioName = audioName;
@@ -31,11 +32,11 @@ export class AudioFile {
     return hash * -1;
   }
 
-  get album(): Album {
+  get album(): WeakAlbum {
     return this._album;
   }
 
-  set album(value: Album) {
+  set album(value: WeakAlbum) {
     this._album = value;
   }
 

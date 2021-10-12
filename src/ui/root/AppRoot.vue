@@ -28,12 +28,13 @@ export default class AppRoot extends Vue {}
 
   $background = #353b48
   $secondary = lighten($background, 20%)
+  $background_darken = darken($background, 20%)
 
   html, body
     margin 0
     padding 0
-    background: darken($background, 20%)
-
+    background: $background_darken
+    overscroll-behavior-x: contain;
 
   html
     height: 100%

@@ -3,6 +3,7 @@ import * as musicMetadata from 'music-metadata-browser';
 import {AudioFile} from '@/data/models/audio/AudioFile';
 import {albumMap} from '@/types/AlbumMap';
 import {PlaylistManager} from '@/core/playlist/PlaylistManager';
+import {WeakAlbum} from '@/data/models/audio/WeakAlbum';
 
 export class AudioTransformer {
   private static _ALBUM_MAP: albumMap = {};
@@ -32,6 +33,7 @@ export class AudioTransformer {
           let audioFile = albumData.audioFiles.find(audioFileInstance => audioFileInstance.hash === audioId);
           if (audioFile && !albumMap[playlistData.name].audioFiles.includes(audioFile)){
             albumMap[playlistData.name].audioFiles.push(audioFile)
+            // audioFile.album = new WeakAlbum(albumMap[playlistData.name])
           }
         }
       }
@@ -69,6 +71,7 @@ export class AudioTransformer {
          )
        }
 
+       audioFileInstance.album = new WeakAlbum(albums[audioMetadata.common.album])
        albums[audioMetadata.common.album].audioFiles.push(audioFileInstance)
      }
 

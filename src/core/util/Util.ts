@@ -56,4 +56,8 @@ export default class Util {
       return timeString
     }
   }
+
+  public static getImageFromBuffer(buffer: Uint8Array){
+    return URL.createObjectURL(new Blob([buffer], { type: 'image/png' }));
+  }
 }

@@ -1,9 +1,9 @@
 <template>
   <div class="homePage">
-    <div class = "albumWrapper">
+    <div class = "albumWrapper" v-if = "albumsLoaded">
       <h1>• Albums</h1>
       <div class = "scrollerView">
-        <div class = "album" v-for="album of albumList">
+        <div class = "album" v-for="album of albumList" @click = "loadAlbum(album.hashcode)">
           <div class = "albumCover">
             <img alt = "albumCover" :src = "getImageFromBuffer(album.albumCover)"/>
           </div>
@@ -24,7 +24,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -35,6 +34,7 @@
   import {Album} from '@/data/models/audio/Album';
   import {AlbumSingleton} from '@/core/audio/AlbumSingleton';
   import {albumMap} from '@/types/AlbumMap';
+  import Util from "@/core/util/Util"
 
   type storeCallback = (store: albumMap) => any;
 
@@ -43,23 +43,25 @@
       AudioController,
     },
   })
-  export default class Home extends Vue {
+  export default class AlbumView extends Vue {
     private albumList: Array<Album> = new Array<Album>();
     private playList: Array<Album> = new Array<Album>();
+    private albumsLoaded = false;
 
     public async mounted(): Promise<void> {
       this.waitUntilStoreSet( store => {
         this.albumList = Object.values(store).filter(album => !album.custom);
         this.playList = Object.values(store).filter(album => album.custom);
-
-        for (let album of this.albumList){
-          console.log(album.hashcode)
-        }
+        this.albumsLoaded = true;
       })
     }
 
-    public getImageFromBuffer(buffer: Uint8Array){
-      return URL.createObjectURL(new Blob([buffer], { type: 'image/png' }));
+    private static getImageFromBuffer(buffer: Uint8Array){
+      return Util.getImageFromBuffer(buffer);
+    }
+
+    private loadAlbum(hashcode: number){
+      this.$router.push({ name: 'album', params: { albumId: hashcode.toString() } })
     }
 
     private waitUntilStoreSet(callback: storeCallback): unknown {
@@ -75,6 +77,10 @@
 </script>
 
 <style scoped lang="stylus">
+  $background = #353b48
+  $secondary = lighten($background, 20%)
+  $background_darken = darken($background, 20%)
+
   .homePage
     height: 100%
     width: 100%
