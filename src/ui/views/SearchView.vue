@@ -7,6 +7,10 @@
           <input autofocus type="text" placeholder="Search term" v-model = "input">
         </div>
       </div>
+
+      <div class = "playlistScrollerWrapper">
+        <playlist-scroller :audio-files="searchForAudio(input)"></playlist-scroller>
+      </div>
     </template>
 
     <template v-else>
@@ -22,10 +26,15 @@
   import {AlbumSingleton} from '../../core/audio/AlbumSingleton';
   import {albumMap} from '../../types/AlbumMap';
   import {Album} from '../../data/models/audio/Album';
+  import PlaylistScroller from '../components/modules/player/PlaylistScroller.vue';
+  import {AudioSearch} from '../../core/search/AudioSearch';
+
+  let audioSearch = new AudioSearch();
 
   type storeCallback = (store: albumMap) => any;
-
-  @Component
+  @Component({
+    components: {PlaylistScroller}
+  })
   export default class SearchView extends Vue {
     private albumsLoaded = false;
     private albumList: Array<Album> = new Array<Album>();
@@ -37,6 +46,10 @@
         this.albumList = Object.values(store);
         this.albumsLoaded = true;
       })
+    }
+
+    private searchForAudio(audio: string){
+      return audioSearch.searchForAudioFile(audio);
     }
 
     private waitUntilStoreSet(callback: storeCallback): unknown {
@@ -67,6 +80,9 @@ $background_darken = darken($background, 20%)
       color: white
       font-family Poppins;
       font-size: 25px
+
+  .playlistScrollerWrapper
+    margin-top: 30px
 
   .topBar
     padding-top: 30px

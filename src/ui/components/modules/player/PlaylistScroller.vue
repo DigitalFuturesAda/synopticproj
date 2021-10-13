@@ -10,7 +10,7 @@
           <h1>Add to Queue</h1>
         </div>
 
-        <template v-if = "album.custom">
+        <template v-if = "album && album.custom">
           <div class = "button" v-on:click = "removeFromPlaylist(album, selectedAudioFile)">
             <h1>Remove from playlist</h1>
           </div>
@@ -35,8 +35,10 @@
         </div>
       </div>
     </div>
+
+
     <div class = "albumViewWrapper" v-else>
-      <div class = "albumView" v-for = "audioFile in album.audioFiles">
+      <div class = "albumView" v-for = "audioFile in playlist">
         <div class = "albumCover">
           <img :src = "getAlbumArt(audioFile)" alt="icon"/>
         </div>
@@ -100,6 +102,10 @@ export default class PlaylistScroller extends Vue {
           album => album.custom
       )
     })
+  }
+
+  get playlist(){
+    return this.album ? this.album.audioFiles : this.audioFiles
   }
 
   private getAlbumArt(audioFile: AudioFile){
@@ -216,6 +222,8 @@ export default class PlaylistScroller extends Vue {
 </script>
 
 <style scoped lang="stylus">
+
+  @import "~@/ui/config.styl"
 
   $background = #353b48
   $background_darken = darken($background, 20%)
