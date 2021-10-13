@@ -2,11 +2,12 @@ import Vue from 'vue'
 import App from './ui/root/AppRoot.vue'
 import router from './data/router'
 import store from './data/store'
-import XnsSeekBar from 'xns-seek-bar'
 import './registerServiceWorker'
+import VueSimpleAlert from "vue-simple-alert";
 
-Vue.use(XnsSeekBar)
 Vue.config.productionTip = false
+
+Vue.use(VueSimpleAlert);
 
 new Vue({
   router,
