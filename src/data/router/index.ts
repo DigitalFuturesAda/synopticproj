@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import AlbumView from '@/ui/views/home/AlbumView.vue'
+import AlbumView from '@/ui/views/AlbumView.vue'
+import PlaylistView from '@/ui/views/PlaylistView.vue';
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,11 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'AlbumView',
     component: AlbumView
+  },
+  {
+    path: '/playlist/:id',
+    name: 'PlaylistView',
+    component: PlaylistView
   }
 ]
 

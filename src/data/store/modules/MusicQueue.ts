@@ -22,7 +22,7 @@ export class MusicQueue extends VuexModule {
 
   @Mutation
   public nextSong(){
-    if (this.currentFileCounter >= this.audioFilesQueue.length) return
+    if (this.currentFileCounter >= this.audioFilesQueue.length - 1) return
     this.currentFileCounter ++;
   }
 

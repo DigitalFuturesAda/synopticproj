@@ -25,16 +25,22 @@
         </div>
       </div>
     </div>
+
+    <div v-else>
+      <div class = "fullscreenLoading">
+        <h1>Loading... 🎸</h1>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator';
-  import AudioController from '@/ui/components/modules/player/AudioController.vue';
-  import {Album} from '@/data/models/audio/Album';
-  import {AlbumSingleton} from '@/core/audio/AlbumSingleton';
-  import {albumMap} from '@/types/AlbumMap';
-  import Util from "@/core/util/Util"
+  import AudioController from '../components/modules/player/AudioController.vue';
+  import {Album} from '../../data/models/audio/Album';
+  import {AlbumSingleton} from '../../core/audio/AlbumSingleton';
+  import {albumMap} from '../../types/AlbumMap';
+  import Util from "../../core/util/Util"
 
   type storeCallback = (store: albumMap) => any;
 
@@ -62,7 +68,7 @@
     }
 
     private loadAlbum(hashcode: number){
-      this.$router.push({ name: 'album', params: { albumId: hashcode.toString() } })
+      this.$router.push({ path: `playlist/${hashcode}` })
     }
 
     private waitUntilStoreSet(callback: storeCallback): unknown {
@@ -86,6 +92,17 @@
     height: 100%
     width: 100%
     max-height 100%
+
+    .fullscreenLoading
+      display: flex
+      align-items center
+      justify-content center
+      height: 100%
+
+      h1
+        color: white
+        font-family Poppins;
+        font-size: 25px
 
     .albumWrapper
       padding-top: 30px
@@ -146,5 +163,4 @@
               width: 180px
               height: 180px
               object-fit cover
-
 </style>

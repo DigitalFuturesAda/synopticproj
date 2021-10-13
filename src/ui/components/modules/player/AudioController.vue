@@ -1,6 +1,6 @@
 <template>
   <div>
-    <audio ref="audioInstance" :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
+    <audio ref="audioInstance" autoplay :controls="debugOption_displayAudioElement" :src = "computedCurrentSong"></audio>
     <div class = "audioController">
       <div class = "audioWrapper">
 
@@ -38,19 +38,22 @@
 
         <div class = "audioControls">
           <div class = "wrapper">
-            <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong">
+            <ImageButton
+                v-on:click.native="currentSong && shufflePlaylist()"
+                style = "transform: scale(0.6)"
+                :disabled="!currentSong">
               <ShuffleSvg fill = "white" style = "opacity: 0.3"/>
             </ImageButton>
 
             <ImageButton
-                v-on:click.native="previousSong()"
+                v-on:click.native="(currentSong && !isAudioQueueFirstItem) && previousSong()"
                 :disabled="!currentSong || isAudioQueueFirstItem"
                 style = "transform: scale(1.1)">
               <RewindSvg fill = "white" style = "opacity: 0.75"/>
             </ImageButton>
 
             <ImageButton
-                v-on:click.native="playPauseButtonPress()"
+                v-on:click.native="currentSong && playPauseButtonPress()"
                 :disabled="!currentSong"
                 style = "transform: scale(1.5); padding-left: 15px; padding-right: 15px">
               <template v-if="isPaused">
@@ -62,13 +65,13 @@
             </ImageButton>
 
             <ImageButton
-                v-on:click.native="nextSong()"
+                v-on:click.native="(currentSong && !isAudioQueueLastItem) && nextSong()"
                 :disabled="!currentSong || isAudioQueueLastItem"
                 style = "transform: scale(1.1)">
               <FastForwardSvg fill = "white" style = "opacity: 0.75"/>
             </ImageButton>
 
-            <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong">
+            <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong" v-on:click.native="openPlaylistQueue()">
               <CollectionSvg fill = "white" style = "opacity: 0.3"/>
             </ImageButton>
           </div>
@@ -109,6 +112,7 @@ export default class AudioController extends Vue {
   @musicQueue.Mutation addSong!: (state: AudioFile) => void;
   @musicQueue.Mutation nextSong!: () => void;
   @musicQueue.Mutation previousSong!: () => void;
+  @musicQueue.Mutation shufflePlaylist!: () => void;
   @musicQueue.Getter currentTrackNumber!: number;
   @musicQueue.Getter playlistLength!: number;
   @musicQueue.Getter currentSong!: AudioFile;
@@ -152,6 +156,10 @@ export default class AudioController extends Vue {
     }
   }
 
+  private openPlaylistQueue(){
+    this.$router.push({ path: `playlist/queue` })
+  }
+
   public async mounted(): Promise<void> {
     new AudioTransformer().createAlbumMemoryCache().then(parsedResponse => {
       AlbumSingleton.getInstance().setStore(parsedResponse);
@@ -163,7 +171,9 @@ export default class AudioController extends Vue {
       setTimeout( () => {
         this.addSong(audioFile[3])
         this.addSong(audioFile[4])
-      }, 2000)
+        this.addSong(audioFile[5])
+        this.addSong(audioFile[6])
+      }, 0)
 
     });
 

@@ -3,6 +3,7 @@ import App from './ui/root/AppRoot.vue'
 import router from './data/router'
 import store from './data/store'
 import XnsSeekBar from 'xns-seek-bar'
+import './registerServiceWorker'
 
 Vue.use(XnsSeekBar)
 Vue.config.productionTip = false
