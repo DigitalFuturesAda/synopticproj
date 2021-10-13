@@ -15,7 +15,7 @@ const routes: Array<RouteConfig> = [
     path: '/playlist/:id',
     name: 'PlaylistView',
     component: PlaylistView
-  }
+  },
 ]
 
 export default new VueRouter({

@@ -166,8 +166,6 @@ export default class AudioController extends Vue {
 
       let audioFile = AlbumSingleton.getInstance().getStore()["Black Holes and Revelations"].audioFiles;
 
-      console.log(AlbumSingleton.getInstance().getStore())
-
       setTimeout( () => {
         this.addSong(audioFile[3])
         this.addSong(audioFile[4])
