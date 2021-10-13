@@ -21,7 +21,7 @@
         <h1>• Add to playlist</h1>
 
         <div class = "scroller">
-          <div class = "button">
+          <div class = "button" v-on:click = "createPlaylist(selectedAudioFile)">
             <h1>Create new</h1>
           </div>
 
@@ -115,13 +115,60 @@ export default class PlaylistScroller extends Vue {
     this.addSong(audioFile);
   }
 
-  private addToPlaylist(playlist: Album, audioFile: AudioFile){
-    let addToPlaylistAttempt = PlaylistManager.getOrCreate().addToPlaylist(
-        playlist.title,
-        audioFile.hash
-    );
+  private createPlaylist(audioFile: AudioFile){
+    this.$prompt("Enter playlist name").then(name => {
+      try {
+        PlaylistManager.getOrCreate().createPlaylist(name)
+      } catch (error) {
+        return this.$fire({
+          type: 'error',
+          title: 'Failed to add to create playlist',
+          text: error,
+        });
+      }
 
-    console.log("addToPlaylistAttempt: ", addToPlaylistAttempt);
+      try {
+        PlaylistManager.getOrCreate().addToPlaylist(name, audioFile.hash)
+      } catch (error) {
+        return this.$fire({
+          type: 'error',
+          title: 'Failed to add to playlist',
+          text: error,
+        });
+      }
+
+      this.$fire({
+        type: 'success',
+        title: "Added to playlist!",
+        grow: "fullscreen",
+        text: "To view the playlist the cache must be reloaded",
+        confirmButtonText: "Reload cache"
+      }).then( () => {
+        location.reload()
+      })
+    });
+  }
+
+  private addToPlaylist(playlist: Album, audioFile: AudioFile){
+    let addToPlaylistAttempt;
+
+    try {
+      addToPlaylistAttempt = PlaylistManager.getOrCreate().addToPlaylist(
+          playlist.title,
+          audioFile.hash
+      );
+    } catch (error) {
+      return this.$fire({
+        type: 'error',
+        title: 'Failed to add to playlist',
+        text: error,
+      });
+    }
+
+    this.$fire({
+      type: 'success',
+      title: "Added to playlist!",
+    })
   }
 
   private waitUntilStoreSet(callback: storeCallback): unknown {

@@ -20,11 +20,15 @@ export class PlaylistManager {
   }
 
   public createPlaylist(name: string): string {
+    if (name.length === 0){
+      throw "Playlist name cannot be empty"
+    }
+
     let currentStore = PlaylistManager.getOrCreateStore();
 
     for (let item of currentStore){
       if (item.name === name){
-        return "Playlist name already exists!";
+        throw "Playlist name already exists!";
       }
     }
 
@@ -43,17 +47,17 @@ export class PlaylistManager {
     let currentStore = PlaylistManager.getOrCreateStore();
 
     if (!currentStore.find(playlist => playlist.name === name)){
-      return "Playlist does not exist!"
+      throw "Playlist does not exist!"
     }
 
     if (!PlaylistManager.doesAlbumMapContainAudioId(audioId)){
-      return "audioId is not a recognised hash"
+      throw "audioId is not a recognised hash"
     }
 
     for (let item of currentStore){
       if (item.name === name){
         if (item.files.includes(audioId)){
-          return "Playlist already contains item"
+          throw "Playlist already contains item"
         }
         item.files.push(audioId)
       }
