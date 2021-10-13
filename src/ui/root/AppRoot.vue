@@ -34,7 +34,7 @@ export default class AppRoot extends Vue {}
     margin 0
     padding 0
     background: $background_darken
-    overscroll-behavior-x: contain;
+    font-family Poppins
 
   html
     height: 100%

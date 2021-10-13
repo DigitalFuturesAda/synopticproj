@@ -1,5 +1,10 @@
 <template>
   <div class="homePage">
+    <div class = "topBar" v-if = "albumsLoaded">
+      <div class = "button" v-on:click = "openSearch()">
+        <h1>Search</h1>
+      </div>
+    </div>
     <div class = "albumWrapper" v-if = "albumsLoaded">
       <h1>• Albums</h1>
       <div class = "scrollerView">
@@ -13,9 +18,9 @@
         </div>
       </div>
 
-      <h1>• Playlists</h1>
-      <div class = "scrollerView">
-        <div class = "album" v-for="album of playList">
+      <h1 v-if = "playList.length > 0">• Playlists</h1>
+      <div v-if = "playList.length > 0" class = "scrollerView">
+        <div class = "album" v-for="album of playList" @click = "loadAlbum(album.hashcode)">
           <div class = "albumCover">
             <img alt = "albumCover" :src = "getImageFromBuffer(album.albumCover)"/>
           </div>
@@ -71,6 +76,10 @@
       this.$router.push({ path: `playlist/${hashcode}` })
     }
 
+    private openSearch(){
+      this.$router.push({ path: '/search' })
+    }
+
     private waitUntilStoreSet(callback: storeCallback): unknown {
       let store = AlbumSingleton.getInstance().getStore();
 
@@ -89,9 +98,25 @@
   $background_darken = darken($background, 20%)
 
   .homePage
-    height: 100%
-    width: 100%
-    max-height 100%
+    .topBar
+      padding-top: 30px
+      margin-left: 30px;
+      margin-right: 30px;
+
+      .button
+        display: flex
+        align-items center
+        justify-content center
+        background: $background
+        border-radius: 50px
+
+        h1
+          color: white
+          font-family Poppins;
+          font-size: 20px
+          font-weight: 400
+          margin: 0
+          padding: 15px
 
     .fullscreenLoading
       display: flex
@@ -131,6 +156,7 @@
         margin: 0
         height: min-content;
         padding-bottom: 30px
+        overscroll-behavior-x: contain;
 
         &::-webkit-scrollbar
           display: none;

@@ -163,16 +163,7 @@ export default class AudioController extends Vue {
   public async mounted(): Promise<void> {
     new AudioTransformer().createAlbumMemoryCache().then(parsedResponse => {
       AlbumSingleton.getInstance().setStore(parsedResponse);
-
       let audioFile = AlbumSingleton.getInstance().getStore()["Black Holes and Revelations"].audioFiles;
-
-      setTimeout( () => {
-        this.addSong(audioFile[3])
-        this.addSong(audioFile[4])
-        this.addSong(audioFile[5])
-        this.addSong(audioFile[6])
-      }, 0)
-
     });
 
     this.audioInstance.ontimeupdate = () => {

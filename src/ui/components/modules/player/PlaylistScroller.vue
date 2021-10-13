@@ -11,7 +11,7 @@
         </div>
 
         <template v-if = "album.custom">
-          <div class = "button">
+          <div class = "button" v-on:click = "removeFromPlaylist(album, selectedAudioFile)">
             <h1>Remove from playlist</h1>
           </div>
         </template>
@@ -168,6 +168,38 @@ export default class PlaylistScroller extends Vue {
     this.$fire({
       type: 'success',
       title: "Added to playlist!",
+      grow: "fullscreen",
+      text: "To view the playlist the cache must be reloaded",
+      confirmButtonText: "Reload cache"
+    }).then( () => {
+      location.reload()
+    })
+  }
+
+  private removeFromPlaylist(playlist: Album, audioFile: AudioFile){
+    let removeFromPlaylistAttempt;
+
+    try {
+      removeFromPlaylistAttempt = PlaylistManager.getOrCreate().removeFromPlaylist(
+          playlist.title,
+          audioFile.hash
+      );
+    } catch (error) {
+      return this.$fire({
+        type: 'error',
+        title: 'Failed to remove from playlist',
+        text: error,
+      });
+    }
+
+    this.$fire({
+      type: 'success',
+      title: "Removed from playlist!",
+      grow: "fullscreen",
+      text: "To view the playlist the cache must be reloaded",
+      confirmButtonText: "Reload cache"
+    }).then( () => {
+      location.reload()
     })
   }
 

@@ -3,8 +3,15 @@
     <div class = "playlistViewWrapper">
       <template v-if = "hasFetchedAlbum">
         <div class = "title">
-          <h1>{{ fetchedAlbum.title }}</h1>
-          <h2>{{ fetchedAlbum.author }}</h2>
+          <div class = "information">
+            <h1>{{ fetchedAlbum.title }}</h1>
+            <h2>{{ fetchedAlbum.author }}</h2>
+          </div>
+          <div class = "controls" v-if="fetchedAlbum.custom">
+            <div class = "button" v-on:click = "deletePlaylist()">
+              <h1>Delete</h1>
+            </div>
+          </div>
         </div>
 
         <div class = "playlistContents">
@@ -24,17 +31,6 @@
           </template>
         </div>
       </template>
-      <!--
-        This component should only contain the Album name, artist,
-        the rest should be abstracted away into a PlaylistComponent
-        which takes an array of AudioFile's
-
-        The PlaylistComponent should display the:
-          - Album art
-          - Song name
-          - Icon to add to queue (this should be hidden if queue === true)
-          - Icon to add to playlist
-      -->
     </div>
   </div>
 </template>
@@ -45,6 +41,7 @@
   import {albumMap} from '@/types/AlbumMap';
   import {Album} from '@/data/models/audio/Album';
   import PlaylistScroller from '@/ui/components/modules/player/PlaylistScroller.vue';
+  import {PlaylistManager} from '../../core/playlist/PlaylistManager';
 
   type storeCallback = (store: albumMap) => any;
 
@@ -67,13 +64,35 @@
             .filter(store => store.hashcode === Number.parseInt(playlistId))[0]
 
         if (!matchingAlbum){
-          console.log("Couldn't find matching album");
+          this.$router.push("/")
           this.failedToFetchAlbum = true;
           return;
         }
 
         this.hasFetchedAlbum = true;
         this.fetchedAlbum = matchingAlbum;
+      })
+    }
+
+    private deletePlaylist(){
+      try {
+        PlaylistManager.getOrCreate().deletePlaylist(this.fetchedAlbum.title);
+      } catch (error) {
+        return this.$fire({
+          type: 'error',
+          title: 'Failed to delete playlist',
+          text: error,
+        });
+      }
+
+      this.$fire({
+        type: 'success',
+        title: "Deleted playlist!",
+        grow: "fullscreen",
+        text: "Press reload cache to go to the home page",
+        confirmButtonText: "Reload cache"
+      }).then( () => {
+        window.location.replace("/")
       })
     }
 
@@ -102,9 +121,6 @@
     .playlistViewWrapper
       height: 100%
 
-      .playlistContents
-        height: 100%
-
       .message
         display: flex
         justify-content center
@@ -123,19 +139,41 @@
         margin-right: 30px;
         padding-top: 30px;
         padding-bottom: 30px
+        display: grid
+        grid-template-rows 1fr
+        grid-template-columns 1fr auto
 
-        h2
-          color: white
-          font-family Poppins;
-          font-size: 20px
-          font-weight: 500
-          margin: 0
-          opacity: 0.75
+        .controls
+          .button
+            display: flex
+            align-items center
+            justify-content center
+            background: $background
+            border-radius: 50px
 
-        h1
-          color: white
-          font-family Poppins;
-          font-size: 25px
-          font-weight: 400
-          margin: 0
+            h1
+              color: white
+              font-family Poppins;
+              font-size: 20px
+              font-weight: 400
+              margin: 0
+              padding: 15px
+              padding-left: 30px
+              padding-right: 30px
+
+        .information
+          h2
+            color: white
+            font-family Poppins;
+            font-size: 20px
+            font-weight: 500
+            margin: 0
+            opacity: 0.75
+
+          h1
+            color: white
+            font-family Poppins;
+            font-size: 25px
+            font-weight: 400
+            margin: 0
 </style>

@@ -46,16 +46,42 @@ export class PlaylistManager {
   public deletePlaylist(name: string): string {
     let currentStore = PlaylistManager.getOrCreateStore();
 
-    let valueIndex = currentStore.findIndex(playlists => playlists.name === name);
-
-    if (valueIndex === -1){
+    if (currentStore.findIndex(playlists => playlists.name === name) === -1){
       throw "Playlist does not exist!"
     }
 
-    const storeWithoutValue = currentStore.splice(currentStore.findIndex(playlists => playlists.name === name));
-    localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(storeWithoutValue));
-
+    localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore.filter(playlist => playlist.name !== name)));
     return "Deleted playlist!"
+  }
+
+  public removeFromPlaylist(name: string, audioId: number): string {
+    let currentStore = PlaylistManager.getOrCreateStore();
+
+    if (!currentStore.find(playlist => playlist.name === name)){
+      throw "Playlist does not exist!"
+    } else {
+     let store = currentStore.find(playlist => playlist.name === name);
+
+     if (store?.files && store.files.length === 1){
+       throw "Cannot remove the last item in a playlist. Delete the entire playlist instead"
+     }
+    }
+
+    if (!PlaylistManager.doesAlbumMapContainAudioId(audioId)){
+      throw "audioId is not a recognised hash"
+    }
+
+    for (let item of currentStore){
+      if (item.name === name){
+        if (item.files.includes(audioId)){
+          const id = item.files.findIndex(file => file === audioId);
+          item.files.splice(id);
+        }
+      }
+    }
+
+    localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore));
+    return "Removed from playlist!"
   }
 
   public addToPlaylist(name: string, audioId: number): string {
@@ -80,7 +106,7 @@ export class PlaylistManager {
 
     localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore));
 
-    return "Added to Playlist!"
+    return "Added to playlist!"
   }
 
   private static getOrCreateStore(): playlistStore {
