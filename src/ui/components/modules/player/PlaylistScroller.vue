@@ -1,10 +1,42 @@
 <template>
   <div class = "playlistScroller">
-    <div class = "addingToPlaylist" v-if = "addingToPlaylist">
-      test
+    <div class = "addingToPlaylist" v-if = "selectedAudioFile">
+      <div class = "quickControls">
+        <div class = "button" v-on:click = "selectedAudioFile = null">
+          <h1>Close</h1>
+        </div>
+
+        <div class = "button" v-on:click = "addToQueue(selectedAudioFile)">
+          <h1>Add to Queue</h1>
+        </div>
+
+        <template v-if = "album.custom">
+          <div class = "button">
+            <h1>Remove from playlist</h1>
+          </div>
+        </template>
+      </div>
+
+      <div class = "playlistControls">
+        <h1>• Add to playlist</h1>
+
+        <div class = "scroller">
+          <div class = "button">
+            <h1>Create new</h1>
+          </div>
+
+          <div
+              class = "button"
+              v-for = "playlist in customPlaylists"
+              v-on:click = "addToPlaylist(playlist, selectedAudioFile)"
+          >
+            <h1>{{ playlist.title }}</h1>
+          </div>
+        </div>
+      </div>
     </div>
     <div class = "albumViewWrapper" v-else>
-      <div class = "albumView" v-for = "audioFile in audioFiles">
+      <div class = "albumView" v-for = "audioFile in album.audioFiles">
         <div class = "albumCover">
           <img :src = "getAlbumArt(audioFile)" alt="icon"/>
         </div>
@@ -16,7 +48,7 @@
           </div>
         </div>
         <div class = "button">
-          <add-svg/>
+          <add-svg v-on:click = "showOptions(audioFile)"/>
         </div>
       </div>
     </div>
@@ -31,6 +63,15 @@ import {AudioFile} from '@/data/models/audio/AudioFile';
 import Util from '@/core/util/Util';
 
 import AddSvg from "@/ui/assets/add.svg"
+import {Album} from '@/data/models/audio/Album';
+import {AlbumSingleton} from '@/core/audio/AlbumSingleton';
+import {albumMap} from '@/types/AlbumMap';
+import {namespace} from 'vuex-class';
+import {PlaylistManager} from '@/core/playlist/PlaylistManager';
+
+const musicQueue = namespace('MusicQueue');
+
+type storeCallback = (store: albumMap) => any;
 
 @Component({
   components: {
@@ -38,17 +79,59 @@ import AddSvg from "@/ui/assets/add.svg"
   }
 })
 export default class PlaylistScroller extends Vue {
+  /**
+   * Refactor this so either an Album is passed which will always
+   * be iterated through, and if custom will give the ability to
+   * remove songs from playlists
+   *
+   * Still allow the audioFile's array to be passed.
+   */
   @Prop() readonly audioFiles!: AudioFile[]
+  @Prop() readonly album!: Album
 
-  private addingToPlaylist: boolean = true;
+  @musicQueue.Mutation addSong!: (state: AudioFile) => void;
+
+  private customPlaylists: Array<Album> = new Array<Album>();
+  private selectedAudioFile: AudioFile | null = null;
 
   public async mounted(): Promise<void> {
-
+    this.waitUntilStoreSet(store => {
+      this.customPlaylists = Object.values(store).filter(
+          album => album.custom
+      )
+    })
   }
 
   private getAlbumArt(audioFile: AudioFile){
     if (!audioFile.albumArt) return "";
     return Util.getImageFromBuffer(audioFile.albumArt);
+  }
+
+  private showOptions(audioFile: AudioFile){
+    this.selectedAudioFile = audioFile
+  }
+
+  private addToQueue(audioFile: AudioFile){
+    this.addSong(audioFile);
+  }
+
+  private addToPlaylist(playlist: Album, audioFile: AudioFile){
+    let addToPlaylistAttempt = PlaylistManager.getOrCreate().addToPlaylist(
+        playlist.title,
+        audioFile.hash
+    );
+
+    console.log("addToPlaylistAttempt: ", addToPlaylistAttempt);
+  }
+
+  private waitUntilStoreSet(callback: storeCallback): unknown {
+    let store = AlbumSingleton.getInstance().getStore();
+
+    if (store === null || store === undefined){
+      return setTimeout( () => this.waitUntilStoreSet(callback), 1000)
+    }
+
+    callback(store)
   }
 }
 </script>
@@ -57,6 +140,7 @@ export default class PlaylistScroller extends Vue {
 
   $background = #353b48
   $background_darken = darken($background, 20%)
+  $secondary = lighten($background, 20%)
 
   $albumSize = 90px;
 
@@ -67,8 +151,59 @@ export default class PlaylistScroller extends Vue {
     .addingToPlaylist
       margin-left: 30px;
       margin-right: 30px;
-      background: pink
       height: 100%
+
+      .playlistControls
+        margin-top: 30px
+
+        h1
+          color: #fff;
+          font-family: Poppins;
+          font-size: 25px;
+          margin: 0;
+          margin-bottom: 30px;
+
+        .scroller
+          .button
+            display: flex
+            align-items center
+            justify-content center
+            background: $background
+            border-radius: 50px
+
+            &:nth-child(n + 2)
+              margin-top: 15px
+
+            h1
+              color: white
+              font-family Poppins;
+              font-size: 20px
+              font-weight: 400
+              margin: 0
+              padding: 15px
+
+      .quickControls
+        width: 100%
+        display: flex
+        flex-direction column
+
+        .button
+          display: flex
+          align-items center
+          justify-content center
+          background: $background
+          border-radius: 50px
+
+          &:nth-child(n + 2)
+            margin-top: 15px
+
+          h1
+            color: white
+            font-family Poppins;
+            font-size: 20px
+            font-weight: 400
+            margin: 0
+            padding: 15px
 
     .albumViewWrapper
       margin-left: 30px;

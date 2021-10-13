@@ -9,7 +9,7 @@
 
         <div class = "playlistContents">
           <playlist-scroller
-              :audioFiles = "fetchedAlbum.audioFiles">
+              :album = "fetchedAlbum">
           </playlist-scroller>
         </div>
       </template>

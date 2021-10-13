@@ -19,12 +19,12 @@ export class PlaylistManager {
     return PlaylistManager.getOrCreateStore();
   }
 
-  public createPlaylist(name: string){
+  public createPlaylist(name: string): string {
     let currentStore = PlaylistManager.getOrCreateStore();
 
     for (let item of currentStore){
       if (item.name === name){
-        throw "Playlist name already exists!";
+        return "Playlist name already exists!";
       }
     }
 
@@ -35,29 +35,33 @@ export class PlaylistManager {
 
     currentStore.push(playlist)
     localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore));
+
+    return "Created playlist!"
   }
 
-  public addToPlaylist(name: string, audioId: number){
+  public addToPlaylist(name: string, audioId: number): string {
     let currentStore = PlaylistManager.getOrCreateStore();
 
     if (!currentStore.find(playlist => playlist.name === name)){
-      throw "Playlist does not exist!"
+      return "Playlist does not exist!"
     }
 
     if (!PlaylistManager.doesAlbumMapContainAudioId(audioId)){
-      throw "audioId is not a recognised hash"
+      return "audioId is not a recognised hash"
     }
 
     for (let item of currentStore){
       if (item.name === name){
         if (item.files.includes(audioId)){
-          throw "Playlist already contains item"
+          return "Playlist already contains item"
         }
         item.files.push(audioId)
       }
     }
 
     localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(currentStore));
+
+    return "Added to Playlist!"
   }
 
   private static getOrCreateStore(): playlistStore {
