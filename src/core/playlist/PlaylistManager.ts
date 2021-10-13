@@ -43,6 +43,21 @@ export class PlaylistManager {
     return "Created playlist!"
   }
 
+  public deletePlaylist(name: string): string {
+    let currentStore = PlaylistManager.getOrCreateStore();
+
+    let valueIndex = currentStore.findIndex(playlists => playlists.name === name);
+
+    if (valueIndex === -1){
+      throw "Playlist does not exist!"
+    }
+
+    const storeWithoutValue = currentStore.splice(currentStore.findIndex(playlists => playlists.name === name));
+    localStorage.setItem(PlaylistManager.PLAYLIST_KEY, JSON.stringify(storeWithoutValue));
+
+    return "Deleted playlist!"
+  }
+
   public addToPlaylist(name: string, audioId: number): string {
     let currentStore = PlaylistManager.getOrCreateStore();
 
