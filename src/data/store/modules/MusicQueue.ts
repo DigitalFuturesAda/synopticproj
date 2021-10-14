@@ -48,4 +48,8 @@ export class MusicQueue extends VuexModule {
   public get playlistLength(): number {
     return this.audioFilesQueue.length
   }
+
+  public get currentQueue() {
+    return this.audioFilesQueue
+  }
 }

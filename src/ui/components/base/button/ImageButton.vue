@@ -2,7 +2,7 @@
   <div class = "imageButton">
     <div class = "svgContainer">
       <template v-if = "disabled">
-        <div style = "opacity: 0.3">
+        <div style = "opacity: 0.5">
           <slot></slot>
         </div>
       </template>

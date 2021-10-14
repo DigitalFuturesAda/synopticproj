@@ -15,9 +15,17 @@
         </div>
 
         <div class = "playlistContents">
-          <playlist-scroller
-              :album = "fetchedAlbum">
-          </playlist-scroller>
+          <template v-if="hasFetchedSongs">
+            <playlist-scroller
+                :audio-files="fetchedSongs">
+            </playlist-scroller>
+          </template>
+          <template v-else>
+            <playlist-scroller
+                :album = "fetchedAlbum">
+            </playlist-scroller>
+          </template>
+
         </div>
       </template>
 
@@ -42,8 +50,11 @@
   import {Album} from '@/data/models/audio/Album';
   import PlaylistScroller from '@/ui/components/modules/player/PlaylistScroller.vue';
   import {PlaylistManager} from '../../core/playlist/PlaylistManager';
+  import {AudioFile} from '../../data/models/audio/AudioFile';
+  import {namespace} from 'vuex-class';
 
   type storeCallback = (store: albumMap) => any;
+  const musicQueue = namespace('MusicQueue');
 
   @Component({
     components: {
@@ -55,9 +66,22 @@
     private failedToFetchAlbum: boolean = true;
     private fetchedAlbum!: Album;
 
+    private hasFetchedSongs: boolean = false;
+    private fetchedSongs!: AudioFile[]
+
+    @musicQueue.Getter currentQueue!: Array<AudioFile>;
+
     public async mounted(): Promise<void> {
       const playlistId = this.$route.params.id;
-      if (playlistId === "queue") return; // This requires special handling
+      if (playlistId === "queue") {
+        this.hasFetchedAlbum = true;
+        this.hasFetchedSongs = true;
+        this.fetchedAlbum = new Album("Current queue", "", false, []);
+        this.fetchedSongs = this.currentQueue
+
+        console.log("Current queue: ", this.currentQueue);
+        return;
+      }
 
       this.waitUntilStoreSet(store => {
         const matchingAlbum = Object.values(store)
@@ -109,9 +133,7 @@
 </script>
 
 <style scoped lang="stylus">
-  $background = #353b48
-  $secondary = lighten($background, 20%)
-  $background_darken = darken($background, 20%)
+  @import "~@/ui/config.styl"
 
   .playlistView
     height: 100%
@@ -128,9 +150,9 @@
         height: 100%
 
         h1
-          color: white
+          color: $grey
           font-family Poppins;
-          font-size: 25px
+          font-size: $bigFontSize
           font-weight: 400
           margin: 0
 
@@ -148,13 +170,13 @@
             display: flex
             align-items center
             justify-content center
-            background: $background
+            background: $darkWhite
             border-radius: 50px
 
             h1
-              color: white
+              color: $dark
               font-family Poppins;
-              font-size: 20px
+              font-size: $mediumFontSize
               font-weight: 400
               margin: 0
               padding: 15px
@@ -163,15 +185,14 @@
 
         .information
           h2
-            color: white
+            color: $darkSecondary
             font-family Poppins;
             font-size: 20px
             font-weight: 500
             margin: 0
-            opacity: 0.75
 
           h1
-            color: white
+            color: $dark
             font-family Poppins;
             font-size: 25px
             font-weight: 400

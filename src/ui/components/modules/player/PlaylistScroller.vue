@@ -3,7 +3,7 @@
     <div class = "addingToPlaylist" v-if = "selectedAudioFile">
       <div class = "quickControls">
         <div class = "button" v-on:click = "selectedAudioFile = null">
-          <h1>Close</h1>
+          <x-svg></x-svg>
         </div>
 
         <div class = "button" v-on:click = "addToQueue(selectedAudioFile)">
@@ -11,17 +11,29 @@
         </div>
 
         <template v-if = "album && album.custom">
-          <div class = "button" v-on:click = "removeFromPlaylist(album, selectedAudioFile)">
+          <div class = "button" v-on:click = "removeFromPlaylist(album, selectedAudioFile)" style = "grid-column-start: 1; grid-column-end: 3">
             <h1>Remove from playlist</h1>
           </div>
         </template>
       </div>
 
       <div class = "playlistControls">
-        <h1>• Add to playlist</h1>
+        <div class = "divider">
+          <div class = "wrapper">
+            <line-svg></line-svg>
+          </div>
+
+          <div class = "wrapper">
+            <h1>Playlists</h1>
+          </div>
+
+          <div class = "wrapper">
+            <line-svg></line-svg>
+          </div>
+        </div>
 
         <div class = "scroller">
-          <div class = "button" v-on:click = "createPlaylist(selectedAudioFile)">
+          <div class = "primary-button" v-on:click = "createPlaylist(selectedAudioFile)">
             <h1>Create new</h1>
           </div>
 
@@ -35,8 +47,6 @@
         </div>
       </div>
     </div>
-
-
     <div class = "albumViewWrapper" v-else>
       <div class = "albumView" v-for = "audioFile in playlist">
         <div class = "albumCover">
@@ -71,13 +81,16 @@ import {albumMap} from '@/types/AlbumMap';
 import {namespace} from 'vuex-class';
 import {PlaylistManager} from '@/core/playlist/PlaylistManager';
 
+import LineSvg from "@/ui/assets/line.svg"
+import XSvg from "@/ui/assets/x.svg"
+
 const musicQueue = namespace('MusicQueue');
 
 type storeCallback = (store: albumMap) => any;
 
 @Component({
   components: {
-    AddSvg
+    AddSvg, LineSvg, XSvg
   }
 })
 export default class PlaylistScroller extends Vue {
@@ -114,11 +127,13 @@ export default class PlaylistScroller extends Vue {
   }
 
   private showOptions(audioFile: AudioFile){
+    this.$router.push("options")
     this.selectedAudioFile = audioFile
   }
 
   private addToQueue(audioFile: AudioFile){
     this.addSong(audioFile);
+    this.selectedAudioFile = null
   }
 
   private createPlaylist(audioFile: AudioFile){
@@ -225,10 +240,6 @@ export default class PlaylistScroller extends Vue {
 
   @import "~@/ui/config.styl"
 
-  $background = #353b48
-  $background_darken = darken($background, 20%)
-  $secondary = lighten($background, 20%)
-
   $albumSize = 90px;
 
   .playlistScroller
@@ -243,51 +254,101 @@ export default class PlaylistScroller extends Vue {
       .playlistControls
         margin-top: 30px
 
+        .divider
+          display: grid
+          grid-template-columns 1fr auto 1fr
+          grid-gap: 15px
+          margin-bottom: 15px
+
+          .wrapper
+            display flex
+            justify-content center
+            align-items center
+
+            svg
+              transform: translateY(-5px)
+
+            h1
+              color: $orangePrimary
+              font-family Poppins;
+              font-size: $bigFontSize
+              margin: 0
+              margin-bottom: 10px
+
         h1
-          color: #fff;
+          color: $orangePrimary;
           font-family: Poppins;
-          font-size: 25px;
+          font-size: $bigFontSize
           margin: 0;
           margin-bottom: 30px;
 
         .scroller
-          .button
+          .primary-button
             display: flex
             align-items center
             justify-content center
-            background: $background
+            background: -webkit-gradient(
+                linear, 50% 0%, 50% 100%,
+                color-stop(0%, $orangePrimary),
+                color-stop(100%, $orangeSecondary));
+            background-repeat: no-repeat;
             border-radius: 50px
 
             &:nth-child(n + 2)
               margin-top: 15px
 
             h1
-              color: white
+              color: $white
               font-family Poppins;
-              font-size: 20px
+              font-size: $mediumFontSize
+              font-weight: 600
+              margin: 0
+              padding: 15px
+
+          .button
+            display: flex
+            align-items center
+            justify-content center
+            background: $darkWhite
+            border-radius: 50px
+
+            &:nth-child(n + 2)
+              margin-top: 15px
+
+            h1
+              color: $dark
+              font-family Poppins;
+              font-size: $mediumFontSize
               font-weight: 400
               margin: 0
               padding: 15px
 
       .quickControls
         width: 100%
-        display: flex
-        flex-direction column
+        display: grid
+        grid-template-columns auto auto
+        grid-gap: 15px
 
         .button
           display: flex
           align-items center
           justify-content center
-          background: $background
+          background: -webkit-gradient(
+              linear, 50% 0%, 50% 100%,
+              color-stop(0%, $emeraldGreen),
+              color-stop(100%, $lightSeaGreen));
           border-radius: 50px
 
-          &:nth-child(n + 2)
-            margin-top: 15px
+          svg
+            width: $bigFontSize + "5px"
+            padding: 0
+            margin: 0
+            color: $white
 
           h1
-            color: white
+            color: $white
             font-family Poppins;
-            font-size: 20px
+            font-size: $mediumFontSize
             font-weight: 400
             margin: 0
             padding: 15px
@@ -304,7 +365,6 @@ export default class PlaylistScroller extends Vue {
         grid-template-columns $albumSize 1fr 50px
         grid-gap: 15px
 
-
         .button
           display flex
           align-items center
@@ -312,7 +372,7 @@ export default class PlaylistScroller extends Vue {
 
           svg
             width: 24px
-            fill: lighten($background, 40%)
+            fill: $darkWhiteSecondary
 
         .information
           display: grid
@@ -325,26 +385,25 @@ export default class PlaylistScroller extends Vue {
             justify-content center
 
             h1
-              color: white
+              color: $dark
               font-family Poppins;
-              font-size: 16px
+              font-size: $smallFontSize
               font-weight: 400
               margin: 0
 
             h2
-              color: white
+              color: $darkSecondary
               font-family Poppins;
-              font-size: 16px
+              font-size: $smallFontSize
               font-weight: 400
-              opacity: 0.75
               margin: 0
 
             h3
-              color: white
+              color: $darkSecondary
               font-family Poppins;
-              font-size: 16px
-              font-weight: 400
-              opacity: 0.65
+              font-size: $smallFontSize
+              font-weight: 600
+              opacity: 0.75
               margin: 0
 
         .albumCover

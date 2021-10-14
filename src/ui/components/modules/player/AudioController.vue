@@ -42,14 +42,14 @@
                 v-on:click.native="currentSong && shufflePlaylist()"
                 style = "transform: scale(0.6)"
                 :disabled="!currentSong">
-              <ShuffleSvg fill = "white" style = "opacity: 0.3"/>
+              <ShuffleSvg fill = "#e67e22" style = "opacity: 0.3"/>
             </ImageButton>
 
             <ImageButton
                 v-on:click.native="(currentSong && !isAudioQueueFirstItem) && previousSong()"
                 :disabled="!currentSong || isAudioQueueFirstItem"
                 style = "transform: scale(1.1)">
-              <RewindSvg fill = "white" style = "opacity: 0.75"/>
+              <RewindSvg fill = "#e67e22" style = "opacity: 0.75"/>
             </ImageButton>
 
             <ImageButton
@@ -57,10 +57,10 @@
                 :disabled="!currentSong"
                 style = "transform: scale(1.5); padding-left: 15px; padding-right: 15px">
               <template v-if="isPaused">
-                <PlaySvg fill = "white" style = "opacity: 0.95"/>
+                <PlaySvg fill = "#e67e22" style = "opacity: 0.95"/>
               </template>
               <template v-else>
-                <PauseSvg fill = "white" style = "opacity: 0.95"/>
+                <PauseSvg fill = "#e67e22" style = "opacity: 0.95"/>
               </template>
             </ImageButton>
 
@@ -68,11 +68,11 @@
                 v-on:click.native="(currentSong && !isAudioQueueLastItem) && nextSong()"
                 :disabled="!currentSong || isAudioQueueLastItem"
                 style = "transform: scale(1.1)">
-              <FastForwardSvg fill = "white" style = "opacity: 0.75"/>
+              <FastForwardSvg fill = "#e67e22" style = "opacity: 0.75"/>
             </ImageButton>
 
             <ImageButton style = "transform: scale(0.6)" :disabled="!currentSong" v-on:click.native="openPlaylistQueue()">
-              <CollectionSvg fill = "white" style = "opacity: 0.3"/>
+              <CollectionSvg fill = "#e67e22" style = "opacity: 0.3"/>
             </ImageButton>
           </div>
         </div>
@@ -157,7 +157,12 @@ export default class AudioController extends Vue {
   }
 
   private openPlaylistQueue(){
-    this.$router.push({ path: `playlist/queue` })
+    try {
+      this.$router.push({ path: `/playlist/queue` })
+    } catch (e){
+      console.log("Not navigating")
+    }
+
   }
 
   public async mounted(): Promise<void> {
@@ -195,13 +200,13 @@ export default class AudioController extends Vue {
 </script>
 
 <style scoped lang="stylus">
+  @import "~@/ui/config.styl"
+
   $bandInformationHeight = 70px
-  $background = #353b48
-  $secondary = lighten($background, 20%)
 
   .audioController
     width 100vw
-    background $background
+    background $darkWhite
 
     .audioWrapper
       padding-top: 30px
@@ -225,15 +230,14 @@ export default class AudioController extends Vue {
             font-family: 'Poppins', sans-serif;
             font-size: 18px
             text-align start
-            color: white
-            text-shadow: 0 0 13px $secondary
+            color: $dark
+            //text-shadow: 0 0 13px $secondary
             margin: 0
 
           h2
             font-family: 'Poppins', sans-serif;
             font-size: 18px
-            color: white
-            opacity: 0.65
+            color: $darkSecondary
             margin: 0
 
         .audioCover
@@ -275,7 +279,7 @@ export default class AudioController extends Vue {
               font-weight bold
               font-family: 'Roboto Mono', monospace;
               font-size: 14px
-              color: white
+              color: $dark
               margin: 0
 
           .audioDuration
@@ -285,10 +289,9 @@ export default class AudioController extends Vue {
               font-weight bold
               font-family: 'Roboto Mono', monospace;
               font-size: 14px
-              color: white
+              color: $darkSecondary
               margin: 0
               transform: translateX(2px)
-              opacity: 0.75
 
         .musicProgress
           width: 100%
@@ -298,11 +301,11 @@ export default class AudioController extends Vue {
             width: 100%
             height: 7.5px;
             border-radius: 5px;
-            background: $secondary
+            background: $white
             background-image: -webkit-gradient(
                 linear, 50% 0%, 50% 100%,
-                color-stop(0%, #e67e22),
-                color-stop(100%, #d35400));
+                color-stop(0%, $orangePrimary),
+                color-stop(100%, $orangeSecondary));
             background-repeat: no-repeat;
             outline: none;
             padding: 0;
@@ -313,13 +316,13 @@ export default class AudioController extends Vue {
               width: 0
               height: @width
               border-radius: 50%
-              background: #e67e22
+              background: $orangePrimary
               cursor: pointer
               transition: background .15s ease-in-out
 
   .player
     width 100vw
-    background darken(white, 5%)
+    background $darkWhite
     display flex
     justify-content center
     align-items center

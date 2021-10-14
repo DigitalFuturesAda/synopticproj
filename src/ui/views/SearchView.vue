@@ -65,9 +65,7 @@
 </script>
 
 <style scoped lang="stylus">
-$background = #353b48
-$secondary = lighten($background, 20%)
-$background_darken = darken($background, 20%)
+@import "~@/ui/config.styl"
 
 .searchView
   .fullscreenLoading
@@ -77,9 +75,9 @@ $background_darken = darken($background, 20%)
     height: 100%
 
     h1
-      color: white
+      color: $grey
       font-family Poppins;
-      font-size: 25px
+      font-size: $bigFontSize
 
   .playlistScrollerWrapper
     margin-top: 30px
@@ -93,7 +91,7 @@ $background_darken = darken($background, 20%)
       display: flex
       align-items center
       justify-content center
-      background: $background
+      background: $darkWhite
       border-radius: 50px
 
       input
@@ -102,7 +100,7 @@ $background_darken = darken($background, 20%)
         width: 100%
         height: 100%
         background: none
-        color: white
+        color: $dark
         font-family Poppins;
         font-size: 20px
         font-weight: 400
@@ -110,12 +108,12 @@ $background_darken = darken($background, 20%)
         padding: 15px
 
         &::placeholder
-          color: white
+          color: $grey
 
       h1
-        color: white
+        color: $grey
         font-family Poppins;
-        font-size: 20px
+        font-size: $mediumFontSize
         font-weight: 400
         margin: 0
         padding: 15px

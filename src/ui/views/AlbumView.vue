@@ -6,7 +6,19 @@
       </div>
     </div>
     <div class = "albumWrapper" v-if = "albumsLoaded">
-      <h1>• Albums</h1>
+      <div class = "divider">
+        <div class = "wrapper">
+          <line-svg></line-svg>
+        </div>
+
+        <div class = "wrapper">
+          <h1>Albums</h1>
+        </div>
+
+        <div class = "wrapper">
+          <line-svg></line-svg>
+        </div>
+      </div>
       <div class = "scrollerView">
         <div class = "album" v-for="album of albumList" @click = "loadAlbum(album.hashcode)">
           <div class = "albumCover">
@@ -18,7 +30,19 @@
         </div>
       </div>
 
-      <h1 v-if = "playList.length > 0">• Playlists</h1>
+      <div class = "divider playlist-divider">
+        <div class = "wrapper">
+          <line-svg></line-svg>
+        </div>
+
+        <div class = "wrapper">
+          <h1>Playlists</h1>
+        </div>
+
+        <div class = "wrapper">
+          <line-svg></line-svg>
+        </div>
+      </div>
       <div v-if = "playList.length > 0" class = "scrollerView">
         <div class = "album" v-for="album of playList" @click = "loadAlbum(album.hashcode)">
           <div class = "albumCover">
@@ -46,12 +70,13 @@
   import {AlbumSingleton} from '../../core/audio/AlbumSingleton';
   import {albumMap} from '../../types/AlbumMap';
   import Util from "../../core/util/Util"
+  import LineSvg from "@/ui/assets/line.svg"
 
   type storeCallback = (store: albumMap) => any;
 
   @Component({
     components: {
-      AudioController,
+      AudioController, LineSvg
     },
   })
   export default class AlbumView extends Vue {
@@ -93,9 +118,7 @@
 </script>
 
 <style scoped lang="stylus">
-  $background = #353b48
-  $secondary = lighten($background, 20%)
-  $background_darken = darken($background, 20%)
+  @import "~@/ui/config.styl"
 
   .homePage
     .topBar
@@ -107,11 +130,11 @@
         display: flex
         align-items center
         justify-content center
-        background: $background
+        background: $darkWhite
         border-radius: 50px
 
         h1
-          color: white
+          color: $grey
           font-family Poppins;
           font-size: 20px
           font-weight: 400
@@ -125,7 +148,7 @@
       height: 100%
 
       h1
-        color: white
+        color: $grey
         font-family Poppins;
         font-size: 25px
 
@@ -139,12 +162,35 @@
       grid-template-rows auto 1fr auto auto
       grid-gap: 0
 
-      h1
-        color: white
-        font-family Poppins;
-        font-size: 25px
-        margin: 0
-        margin-bottom: 10px
+      .divider
+        display: grid
+        grid-template-columns 1fr auto 1fr
+        grid-gap: 15px
+        margin-bottom: 15px
+
+        .wrapper
+          display flex
+          justify-content center
+          align-items center
+
+          svg
+            transform: translateY(-5px)
+
+          h1
+            color: $orangePrimary
+            font-family Poppins;
+            font-size: $bigFontSize
+            margin: 0
+            margin-bottom: 10px
+
+      .playlist-divider
+        .wrapper
+          svg
+            path
+              stroke: $lightSeaGreen
+
+          h1
+            color: $lightSeaGreen
 
       .scrollerView
         display: grid;
@@ -172,9 +218,10 @@
             align-items center
 
             h1
+              color: $grey
               font-family Poppins;
               font-weight: 500
-              font-size: 15px
+              font-size: $smallFontSize
               margin: 0
               margin-top: 5px
               text-overflow: ellipsis
@@ -186,6 +233,7 @@
             height: 180px
 
             img
+              border-radius: 5px
               width: 180px
               height: 180px
               object-fit cover
