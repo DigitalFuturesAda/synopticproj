@@ -20,5 +20,10 @@ npm run build
 npm run test:unit
 ```
 
+### Deploy
+```
+vercel --prod
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

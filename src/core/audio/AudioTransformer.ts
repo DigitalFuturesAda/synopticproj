@@ -22,7 +22,7 @@ export class AudioTransformer {
       if (!albumMap[playlistData.name]){
         albumMap[playlistData.name] = new Album(
             playlistData.name,
-            "You",
+            "Curated by you",
             /* custom = */ true,
             new Array<AudioFile>()
         )

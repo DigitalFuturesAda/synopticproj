@@ -70,7 +70,7 @@
 <script lang="ts">
 import 'reflect-metadata'
 
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 import {AudioFile} from '@/data/models/audio/AudioFile';
 import Util from '@/core/util/Util';
 
@@ -83,6 +83,7 @@ import {PlaylistManager} from '@/core/playlist/PlaylistManager';
 
 import LineSvg from "@/ui/assets/line.svg"
 import XSvg from "@/ui/assets/x.svg"
+import {Route} from 'vue-router';
 
 const musicQueue = namespace('MusicQueue');
 
@@ -117,6 +118,13 @@ export default class PlaylistScroller extends Vue {
     })
   }
 
+  @Watch('$route', { immediate: true, deep: true })
+  onUrlChange(newRoute: Route, oldRoute: Route) {
+    if (oldRoute && oldRoute.params.id === "options"){
+      this.selectedAudioFile = null
+    }
+  }
+
   get playlist(){
     return this.album ? this.album.audioFiles : this.audioFiles
   }
@@ -127,7 +135,10 @@ export default class PlaylistScroller extends Vue {
   }
 
   private showOptions(audioFile: AudioFile){
-    this.$router.push("options")
+    if (!this.audioFiles){
+      this.$router.push("options")
+    }
+
     this.selectedAudioFile = audioFile
   }
 
@@ -145,6 +156,7 @@ export default class PlaylistScroller extends Vue {
           type: 'error',
           title: 'Failed to add to create playlist',
           text: error,
+          confirmButtonColor: "#e67e22"
         });
       }
 
@@ -155,6 +167,7 @@ export default class PlaylistScroller extends Vue {
           type: 'error',
           title: 'Failed to add to playlist',
           text: error,
+          confirmButtonColor: "#e67e22"
         });
       }
 
@@ -163,7 +176,8 @@ export default class PlaylistScroller extends Vue {
         title: "Added to playlist!",
         grow: "fullscreen",
         text: "To view the playlist the cache must be reloaded",
-        confirmButtonText: "Reload cache"
+        confirmButtonText: "Reload cache",
+        confirmButtonColor: "#e67e22"
       }).then( () => {
         location.reload()
       })
@@ -183,6 +197,7 @@ export default class PlaylistScroller extends Vue {
         type: 'error',
         title: 'Failed to add to playlist',
         text: error,
+        confirmButtonColor: "#e67e22"
       });
     }
 
@@ -191,7 +206,8 @@ export default class PlaylistScroller extends Vue {
       title: "Added to playlist!",
       grow: "fullscreen",
       text: "To view the playlist the cache must be reloaded",
-      confirmButtonText: "Reload cache"
+      confirmButtonText: "Reload cache",
+      confirmButtonColor: "#e67e22"
     }).then( () => {
       location.reload()
     })
@@ -210,6 +226,7 @@ export default class PlaylistScroller extends Vue {
         type: 'error',
         title: 'Failed to remove from playlist',
         text: error,
+        confirmButtonColor: "#e67e22"
       });
     }
 
@@ -218,7 +235,8 @@ export default class PlaylistScroller extends Vue {
       title: "Removed from playlist!",
       grow: "fullscreen",
       text: "To view the playlist the cache must be reloaded",
-      confirmButtonText: "Reload cache"
+      confirmButtonText: "Reload cache",
+      confirmButtonColor: "#e67e22"
     }).then( () => {
       location.reload()
     })

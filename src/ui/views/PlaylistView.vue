@@ -2,31 +2,41 @@
   <div class = "playlistView">
     <div class = "playlistViewWrapper">
       <template v-if = "hasFetchedAlbum">
-        <div class = "title">
-          <div class = "information">
-            <h1>{{ fetchedAlbum.title }}</h1>
-            <h2>{{ fetchedAlbum.author }}</h2>
-          </div>
-          <div class = "controls" v-if="fetchedAlbum.custom">
-            <div class = "button" v-on:click = "deletePlaylist()">
-              <h1>Delete</h1>
+        <template v-if = "hasFetchedSongs && fetchedSongs.length > 0 || fetchedAlbum && fetchedAlbum.audioFiles && fetchedAlbum.audioFiles.length > 0">
+          <div class = "title">
+            <div class = "information">
+              <h1>{{ fetchedAlbum.title }}</h1>
+              <h2>{{ fetchedAlbum.author }}</h2>
+            </div>
+            <div class = "controls" v-if="fetchedAlbum.custom">
+              <div class = "button" v-on:click = "deletePlaylist()">
+                <h1>Delete</h1>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class = "playlistContents">
-          <template v-if="hasFetchedSongs">
-            <playlist-scroller
-                :audio-files="fetchedSongs">
-            </playlist-scroller>
-          </template>
-          <template v-else>
-            <playlist-scroller
-                :album = "fetchedAlbum">
-            </playlist-scroller>
-          </template>
+          <div class = "playlistContents">
+            <template v-if="hasFetchedSongs">
+              <playlist-scroller
+                  :audio-files="fetchedSongs">
+              </playlist-scroller>
+            </template>
+            <template v-else>
+              <playlist-scroller
+                  :album = "fetchedAlbum">
+              </playlist-scroller>
+            </template>
+          </div>
+        </template>
+        <template v-else>
+          <div class = "message">
+            <h1>Playlist empty!</h1>
 
-        </div>
+            <div class = "button" v-on:click = "goHome()">
+              <h1>Go home</h1>
+            </div>
+          </div>
+        </template>
       </template>
 
       <template v-else>
@@ -52,6 +62,7 @@
   import {PlaylistManager} from '../../core/playlist/PlaylistManager';
   import {AudioFile} from '../../data/models/audio/AudioFile';
   import {namespace} from 'vuex-class';
+  import {Route} from 'vue-router';
 
   type storeCallback = (store: albumMap) => any;
   const musicQueue = namespace('MusicQueue');
@@ -71,6 +82,10 @@
 
     @musicQueue.Getter currentQueue!: Array<AudioFile>;
 
+    public goHome(){
+      this.$router.push("/")
+    }
+
     public async mounted(): Promise<void> {
       const playlistId = this.$route.params.id;
       if (playlistId === "queue") {
@@ -85,7 +100,9 @@
 
       this.waitUntilStoreSet(store => {
         const matchingAlbum = Object.values(store)
-            .filter(store => store.hashcode === Number.parseInt(playlistId))[0]
+            .filter(store => store.hashcode === Number.parseInt(playlistId))[0];
+
+        console.log("matchingAlbum: ", playlistId, matchingAlbum);
 
         if (!matchingAlbum){
           this.$router.push("/")
@@ -96,6 +113,18 @@
         this.hasFetchedAlbum = true;
         this.fetchedAlbum = matchingAlbum;
       })
+    }
+
+    @Watch('$route', { immediate: true, deep: true })
+    onUrlChange(newRoute: Route, oldRoute: Route) {
+      if (newRoute.params.id === "queue"){
+        this.hasFetchedAlbum = true;
+        this.hasFetchedSongs = true;
+        this.fetchedAlbum = new Album("Current queue", "", false, []);
+        this.fetchedSongs = this.currentQueue
+
+        console.log("Current queue: ", this.currentQueue);
+      }
     }
 
     private deletePlaylist(){
@@ -148,6 +177,25 @@
         justify-content center
         align-items center
         height: 100%
+        flex-direction column
+
+        .button
+          display: flex
+          align-items center
+          justify-content center
+          background: $darkWhite
+          border-radius: 50px
+          margin-top: 30px
+
+          h1
+            color: $dark
+            font-family Poppins;
+            font-size: $mediumFontSize
+            font-weight: 400
+            margin: 0
+            padding: 15px
+            padding-left: 30px
+            padding-right: 30px
 
         h1
           color: $grey

@@ -39,12 +39,11 @@ export class Album {
     let hash: number = 1;
     hash = prime * hash + Util.hashCode(this._author);
     hash = prime * hash + Util.hashCode(this._title);
-    hash = prime * hash + (this._custom ? 1 : 0)
     for (let audioFileHash of this._audioFiles.map(
         audioFile => Number.parseInt(audioFile.hash.toString().substr(0, 4))
     )){
       hash = prime * audioFileHash
     }
-    return hash * -1;
+    return (hash + (this._custom ? 1000 : -1000)) * -1;
   }
 }

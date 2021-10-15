@@ -33,6 +33,25 @@ export default class AppRoot extends Vue {}
     background: $white
     font-family Poppins
 
+  .swal2-confirm
+    background-color: $orangePrimary !important
+    border-left-color: $orangeSecondary !important
+    border-right-color: $orangeSecondary !important
+
+  .swal2-cancel
+    background-color: $darkWhite !important
+    color: $grey !important
+
+  .swal2-input
+    border-radius: 50px !important
+
+  .swal2-content
+    color: $darkSecondary !important
+    font-family Poppins !important;
+    font-size: $mediumFontSize !important
+    font-weight: 400 !important
+    margin: 0 !important
+
   html
     height: 100%
 
